@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños, Nata! 🎂💖</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js for 3D Interactive Birthday Cake -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Canvas Confetti for Celebration Effects -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts: Feminine & Romantic Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --blush-pink: #FFD6E0;
+            --deep-rose: #D86C88;
+            --pastel-lavender: #E8DAEF;
+            --mint-cream: #D4EFDF;
+            --warm-peach: #FCF3CF;
+            --rose-gold: #C9968A;
+            --gold-accent: #D4AF37;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle at 50% 30%, #FFF9FB 0%, #FFE6EE 42%, #E8DAEF 80%, #FCE4EC 100%);
+            color: #5D3A43;
+        }
+
+        @media (min-width: 1024px) {
+            body, html {
+                height: 100%;
+                overflow: hidden;
+            }
+        }
+
+        .font-script {
+            font-family: 'Dancing Script', 'Great Vibes', cursive;
+        }
+
+        .font-serif-elegant {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Background Soft Pastel Aura Blobs */
+        .pastel-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatBlob 14s infinite alternate ease-in-out;
+        }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(25px, -25px) scale(1.08); }
+        }
+
+        /* 3D Canvas Stage Container */
+        #canvas-stage-wrapper {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            min-height: 370px;
+            z-index: 10;
+        }
+
+        @media (min-width: 640px) {
+            #canvas-stage-wrapper {
+                height: 450px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            #canvas-stage-wrapper {
+                position: fixed;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 5;
+            }
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            touch-action: pan-y;
+        }
+
+        #canvas-container:active {
+            cursor: grabbing;
+        }
+
+        /* Glassmorphism Pastel Card Styling */
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 
+                0 12px 32px -6px rgba(216, 108, 136, 0.22),
+                0 0 0 1px rgba(255, 214, 224, 0.65) inset;
+        }
+
+        /* Floating Orbit Message Cards Around the Cake (Desktop) & Spacious Grid (Mobile/Tablet) */
+        .orbit-card {
+            z-index: 20;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, background 0.3s ease;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        @media (min-width: 1024px) {
+            .orbit-card {
+                position: absolute;
+                animation: gentleFloatDesktop 4.8s ease-in-out infinite;
+            }
+            .orbit-card:nth-child(1) { animation-delay: 0s; }
+            .orbit-card:nth-child(2) { animation-delay: -0.9s; }
+            .orbit-card:nth-child(3) { animation-delay: -1.8s; }
+            .orbit-card:nth-child(4) { animation-delay: -2.7s; }
+            .orbit-card:nth-child(5) { animation-delay: -3.6s; }
+
+            .orbit-card:hover {
+                transform: translate(-50%, -50%) scale(1.08) translateY(-6px) !important;
+                box-shadow: 
+                    0 20px 38px -5px rgba(216, 108, 136, 0.38),
+                    0 0 24px rgba(255, 182, 193, 0.9);
+                background: rgba(255, 255, 255, 0.96);
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .orbit-card {
+                position: relative;
+                width: 100%;
+            }
+            .orbit-card:hover {
+                transform: translateY(-4px) scale(1.01);
+                background: rgba(255, 255, 255, 0.96);
+            }
+        }
+
+        @keyframes gentleFloatDesktop {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0px) rotate(-0.8deg); }
+            50% { transform: translate(-50%, -50%) translateY(-9px) rotate(1deg); }
+        }
+
+        .orbit-card.active-pulse {
+            box-shadow: 
+                0 0 0 4px rgba(244, 143, 177, 0.45),
+                0 15px 35px rgba(216, 108, 136, 0.35);
+        }
+
+        /* 3D Flip Animation for the Message Modal */
+        .modal-perspective {
+            perspective: 1400px;
+        }
+
+        .card-3d-stage {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1), opacity 0.35s ease;
+        }
+
+        .card-flip-out {
+            transform: rotateY(-90deg) scale(0.92);
+            opacity: 0;
+        }
+
+        .card-flip-in-prep {
+            transform: rotateY(90deg) scale(0.92);
+            opacity: 0;
+            transition: none;
+        }
+
+        /* Romantic Pastel Buttons */
+        .btn-pastel-primary {
+            background: linear-gradient(135deg, #F48FB1 0%, #CE93D8 55%, #F06292 100%);
+            background-size: 200% 200%;
+            color: white;
+            box-shadow: 0 8px 22px -4px rgba(240, 98, 146, 0.52), 0 2px 6px rgba(255,255,255,0.45) inset;
+            transition: all 0.3s ease;
+        }
+
+        .btn-pastel-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 26px -4px rgba(240, 98, 146, 0.68), 0 2px 8px rgba(255,255,255,0.6) inset;
+            background-position: right center;
+        }
+
+        .btn-pastel-primary:active {
+            transform: translateY(1px) scale(0.99);
+        }
+
+        .btn-pastel-secondary {
+            background: rgba(255, 244, 248, 0.92);
+            border: 1.5px solid #F8BBD0;
+            color: #883955;
+            transition: all 0.25s ease;
+        }
+
+        .btn-pastel-secondary:hover {
+            background: #FCE4EC;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(216, 108, 136, 0.22);
+        }
+
+        /* Shimmer Text Effect */
+        .rose-gold-text {
+            background: linear-gradient(90deg, #9C4163 0%, #D86C88 35%, #B37D4E 70%, #9C4163 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shineText 6s linear infinite;
+        }
+
+        @keyframes shineText {
+            to { background-position: 200% center; }
+        }
+
+        /* Custom Scrollbar */
+        .custom-scroll {
+            user-select: text;
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 214, 224, 0.28);
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(216, 108, 136, 0.5);
+            border-radius: 10px;
+        }
+
+        /* Floating 2D Ambient Hearts */
+        .ambient-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 2;
+            animation: riseUp linear infinite;
+            opacity: 0.55;
+        }
+
+        @keyframes riseUp {
+            0% {
+                transform: translateY(105vh) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            15% { opacity: 0.65; }
+            85% { opacity: 0.65; }
+            100% {
+                transform: translateY(-15vh) rotate(360deg) scale(1.15);
+                opacity: 0;
+            }
+        }
+
+        /* ==========================================
+           3D ROMANTIC ENVELOPE & LETTER INTRO STYLES
+           ========================================== */
+        #envelope-intro-screen {
+            background: radial-gradient(circle at 50% 35%, #FFFDF9 0%, #FFE4EE 45%, #E8DAEF 82%, #F8BBD0 100%);
+            transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1), transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #envelope-intro-screen.intro-hidden {
+            opacity: 0;
+            transform: scale(1.08);
+            pointer-events: none;
+        }
+
+        .envelope-stage {
+            perspective: 1400px;
+            position: relative;
+            width: min(88vw, 350px);
+            height: 225px;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @media (min-width: 640px) {
+            .envelope-stage {
+                width: 410px;
+                height: 265px;
+            }
+        }
+
+        .envelope-stage:hover:not(.is-open) {
+            transform: translateY(-6px) rotate(-1deg) scale(1.02);
+        }
+
+        .envelope-stage.is-open {
+            transform: translateY(65px);
+        }
+
+        @media (min-width: 640px) {
+            .envelope-stage.is-open {
+                transform: translateY(80px);
+            }
+        }
+
+        /* Back of Envelope */
+        .envelope-back {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(145deg, #F8BBD0 0%, #F48FB1 100%);
+            border-radius: 18px;
+            box-shadow: 
+                0 25px 55px -12px rgba(173, 66, 106, 0.42),
+                0 0 0 2px rgba(255, 255, 255, 0.85) inset;
+            z-index: 1;
+        }
+
+        /* Romantic Letter Inside the Envelope */
+        .envelope-letter {
+            position: absolute;
+            left: 5%;
+            right: 5%;
+            bottom: 7%;
+            min-height: 92%;
+            background: linear-gradient(180deg, #FFFDF9 0%, #FFF5F8 100%);
+            border-radius: 16px;
+            border: 1.5px solid #FFE0EB;
+            box-shadow: 0 8px 25px rgba(156, 65, 99, 0.18);
+            z-index: 2;
+            padding: 18px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: transform 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) 0.25s, box-shadow 0.6s ease 0.25s;
+        }
+
+        .envelope-letter::before {
+            content: "";
+            position: absolute;
+            inset: 7px;
+            border: 1px dashed rgba(212, 175, 55, 0.45);
+            border-radius: 11px;
+            pointer-events: none;
+        }
+
+        .envelope-stage.is-open .envelope-letter {
+            transform: translateY(-120px) scale(1.04);
+            box-shadow: 0 24px 48px -10px rgba(156, 65, 99, 0.38);
+            z-index: 12;
+        }
+
+        @media (min-width: 640px) {
+            .envelope-stage.is-open .envelope-letter {
+                transform: translateY(-135px) scale(1.06);
+            }
+        }
+
+        /* Left & Right Side Flaps of Envelope */
+        .envelope-side-left {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #FFD6E0 0%, #F8BBD0 100%);
+            clip-path: polygon(0 0, 53% 52%, 0 100%);
+            border-radius: 18px 0 0 18px;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .envelope-side-right {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(225deg, #FFD6E0 0%, #F8BBD0 100%);
+            clip-path: polygon(100% 0, 47% 52%, 100% 100%);
+            border-radius: 0 18px 18px 0;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Front Bottom Pocket Flap */
+        .envelope-pocket {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, #FCE4EC 0%, #FFD6E0 65%, #FFF0F5 100%);
+            clip-path: polygon(0 100%, 50% 44%, 100% 100%);
+            border-radius: 0 0 18px 18px;
+            z-index: 4;
+            filter: drop-shadow(0 -3px 6px rgba(184, 74, 111, 0.12));
+            pointer-events: none;
+        }
+
+        /* Top 3D Opening Flap */
+        .envelope-flap {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, #FFE8F0 0%, #F8BBD0 100%);
+            clip-path: polygon(0 0, 50% 58%, 100% 0);
+            border-radius: 18px 18px 0 0;
+            transform-origin: top center;
+            transition: transform 0.75s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.2s linear 0.3s;
+            z-index: 5;
+            filter: drop-shadow(0 6px 10px rgba(156, 65, 99, 0.18));
+            pointer-events: none;
+        }
+
+        .envelope-stage.is-open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        /* Heart Wax Seal on Envelope */
+        .wax-seal {
+            position: absolute;
+            top: 53%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #F48FB1 0%, #C24770 65%, #88294A 100%);
+            border: 2.5px solid #FCE4EC;
+            box-shadow: 
+                0 6px 16px rgba(136, 41, 74, 0.45),
+                0 0 0 3px rgba(212, 175, 55, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 7;
+            transition: transform 0.45s ease, opacity 0.4s ease;
+            animation: pulseSeal 2.2s infinite ease-in-out;
+        }
+
+        @keyframes pulseSeal {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.09); }
+        }
+
+        .envelope-stage.is-open .wax-seal {
+            transform: translate(-50%, -50%) scale(0.2) rotate(25deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Envelope Shadow on Table */
+        .envelope-shadow {
+            width: 260px;
+            height: 22px;
+            background: radial-gradient(ellipse at center, rgba(184, 74, 111, 0.28) 0%, transparent 72%);
+            margin: 22px auto 0;
+            transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+
+        .envelope-stage.is-open + .envelope-shadow {
+            transform: scaleX(1.2) translateY(60px);
+            opacity: 0.45;
+        }
+
+        /* Customizer Tabs */
+        .tab-btn {
+            transition: all 0.25s ease;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #F48FB1 0%, #CE93D8 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(216, 108, 136, 0.35);
+        }
+
+        input, textarea {
+            user-select: text !important;
+        }
+    </style>
+</head>
+<body class="relative select-none">
+
+    <!-- =========================================================================
+         INITIAL ENVELOPE & LETTER SCREEN (SHOWN FIRST BEFORE MAIN 3D CAKE PAGE)
+         ========================================================================= -->
+    <section id="envelope-intro-screen" class="fixed inset-0 z-[60] flex flex-col items-center justify-between py-6 sm:py-10 px-4 overflow-y-auto">
+        <!-- Decorative Pastel Aura inside Intro -->
+        <div class="pastel-blob w-80 h-80 bg-[#FFD6E0] top-[-8%] left-[-6%]"></div>
+        <div class="pastel-blob w-96 h-96 bg-[#E8DAEF] bottom-[-10%] right-[-6%]"></div>
+
+        <!-- Top Intro Header -->
+        <div class="text-center relative z-10 mt-1 sm:mt-2 max-w-xl mx-auto">
+            <h2 id="ui-env-title" class="font-script text-5xl sm:text-6xl md:text-7xl rose-gold-text drop-shadow-sm leading-tight px-2">
+                ¡Feliz cumple, Nata!
+            </h2>
+            <p id="ui-env-subtitle" class="font-serif-elegant italic text-sm sm:text-lg text-[#7B4B5A] mt-1.5 px-3">
+                Tengo algo muy especial para ti...
+            </p>
+        </div>
+
+        <!-- Center Interactive 3D Envelope & Rising Letter -->
+        <div class="relative z-10 my-auto flex flex-col items-center justify-center w-full pt-28 pb-10 sm:pt-32 sm:pb-12">
+            <div id="envelope-3d-wrapper" class="envelope-stage" onclick="handleEnvelopeCardClick(event)" title="Haz clic para abrir tu carta">
+                <!-- Envelope Back -->
+                <div class="envelope-back"></div>
+
+                <!-- Inner Romantic Letter (Slides up when envelope opens) -->
+                <div class="envelope-letter">
+                    <h3 id="ui-letter-greeting" class="font-script text-3xl sm:text-4xl text-[#9C4163] leading-tight mb-2">
+                        ¡Feliz cumple, Nata!
+                    </h3>
+                    <p id="ui-letter-body" class="font-serif-elegant italic text-sm sm:text-base text-[#5D3A43] leading-relaxed px-2 mb-4">
+                        Ten un lindo día, ve tu regalo sorpresa ✨
+                    </p>
+                    <button id="btn-inside-letter" type="button" onclick="enterCakeWorld(event)" class="btn-pastel-primary px-5 sm:px-6 py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-md flex items-center gap-1.5">
+                        <span>Ver tu regalo sorpresa 🎂✨</span>
+                    </button>
+                </div>
+
+                <!-- Envelope Flaps -->
+                <div class="envelope-side-left"></div>
+                <div class="envelope-side-right"></div>
+                <div class="envelope-pocket"></div>
+                <div class="envelope-flap"></div>
+
+                <!-- Rose-Gold Heart Wax Seal -->
+                <div class="wax-seal">
+                    <span class="text-2xl drop-shadow">💖</span>
+                </div>
+            </div>
+
+            <!-- Soft Surface Shadow -->
+            <div class="envelope-shadow"></div>
+        </div>
+
+        <!-- Bottom Action Button ("💌 Abrir") -->
+        <div id="env-open-btn-container" class="relative z-10 flex flex-col items-center gap-2.5 mb-2 transition-opacity duration-300">
+            <button id="btn-open-envelope" type="button" onclick="openEnvelopeAnimation()" class="btn-pastel-primary px-9 sm:px-12 py-3.5 sm:py-4 rounded-full font-bold text-base sm:text-lg flex items-center gap-2.5 shadow-2xl border-2 border-white/80 animate-bounce">
+                <span id="btn-open-envelope-icon">💌</span>
+                <span id="btn-open-envelope-text">Abrir</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Soft Decorative Pastel Background Blobs -->
+    <div class="pastel-blob w-80 h-80 bg-[#FFD6E0] top-[-5%] left-[-5%]"></div>
+    <div class="pastel-blob w-96 h-96 bg-[#E8DAEF] bottom-[-10%] right-[-5%]" style="animation-delay: -5s;"></div>
+    <div class="pastel-blob w-72 h-72 bg-[#FCF3CF] top-[20%] right-[12%]" style="animation-delay: -9s;"></div>
+    <div class="pastel-blob w-72 h-72 bg-[#D4EFDF] bottom-[15%] left-[10%]" style="animation-delay: -3s;"></div>
+
+    <!-- Ambient Rising Hearts & Sparkles Container -->
+    <div id="ambient-particles" class="fixed inset-0 pointer-events-none z-[2]"></div>
+
+    <!-- Floating Celebration Banner ("¡Deseo pedido! ¡Feliz cumple, Nata! 🎉💖") -->
+    <div id="celebration-banner" class="fixed top-20 sm:top-24 left-1/2 -translate-x-1/2 z-40 pointer-events-none transition-all duration-500 opacity-0 -translate-y-4">
+        <div class="glass-pill px-6 py-3 rounded-full border-2 border-white shadow-2xl flex items-center gap-2.5 text-sm sm:text-base font-bold text-[#9C4163] whitespace-nowrap">
+            <span>¡Deseo pedido! ¡Feliz cumple, Nata! 🎉💖</span>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MAIN PAGE WRAPPER (ULTRA-RESPONSIVE: SPACIOUS MOBILE FLOW & DESKTOP 3D HALO)
+         ========================================================================= -->
+    <main class="relative z-10 flex flex-col justify-between min-h-screen lg:h-screen w-full pb-8 lg:pb-0">
+
+        <!-- TOP NAVIGATION & TITLE HEADER -->
+        <header class="relative lg:fixed top-0 left-0 right-0 z-30 flex flex-col items-center pt-3 sm:pt-4 px-4 lg:pointer-events-none">
+            <!-- Top Navigation Action Pills (Only "✉️ Ver Carta" and "🕯️ Encender Velas" when blown out) -->
+            <div class="w-full max-w-6xl flex flex-wrap justify-between items-center gap-2 pointer-events-auto mb-1">
+                <button onclick="showEnvelopeScreen()" class="glass-pill px-4 py-1.5 rounded-full flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#883955] hover:scale-105 transition active:scale-95" title="Volver a ver el sobre inicial">
+                    <span>✉️</span>
+                    <span id="ui-nav-letter-btn">Ver Carta</span>
+                </button>
+
+                <button id="btn-top-candles" onclick="relightCandles()" class="hidden glass-pill px-4 py-1.5 rounded-full items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#883955] hover:scale-105 transition active:scale-95" title="Encender nuevamente las 5 velitas del pastel">
+                    <span>🕯️</span>
+                    <span>Encender Velas</span>
+                </button>
+            </div>
+
+            <!-- Romantic Main Title (Compact height so 3D candles below have 100% visibility) -->
+            <div class="text-center pointer-events-none mt-0.5 max-w-2xl mx-auto">
+                <h1 id="ui-main-title" class="font-script text-4xl sm:text-5xl md:text-6xl rose-gold-text drop-shadow-sm leading-tight px-2">
+                    ¡Feliz cumple, Nata! ✨
+                </h1>
+                <p id="ui-main-subtitle" class="font-serif-elegant italic text-xs sm:text-sm md:text-base text-[#7B4B5A] max-w-lg mx-auto mt-0.5 px-3">
+                    Gira tu pastel en 3D y abre las 5 cartas en orden 💖
+                </p>
+            </div>
+        </header>
+
+        <!-- 3D THREE.JS INTERACTIVE BIRTHDAY CAKE STAGE (100% UNOBSTRUCTED CANDLES & CAKE) -->
+        <div id="canvas-stage-wrapper" class="my-1 lg:my-0 flex items-center justify-center">
+            <div id="canvas-container" title="Arrastra para girar el pastel 3D y ver las 5 velitas"></div>
+            <!-- Mobile Touch Hint Pill -->
+            <div class="lg:hidden absolute bottom-2 left-1/2 -translate-x-1/2 pointer-events-none z-20">
+                <span class="glass-pill px-3.5 py-1 rounded-full text-[11px] font-semibold text-[#883955] shadow-sm whitespace-nowrap">
+                    👆 Arrastra el pastel para girarlo en 360°
+                </span>
+            </div>
+        </div>
+
+        <!-- 5 MESSAGES AROUND THE CAKE (Spacious Halo on Desktop, Padded Grid on Mobile/Tablet) -->
+        <section class="relative lg:fixed lg:inset-0 z-20 px-4 sm:px-6 lg:px-0 mt-2 lg:mt-0 lg:pointer-events-none">
+            <div id="orbit-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-w-xl mx-auto lg:max-w-none lg:block lg:w-full lg:h-full">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- BOTTOM CONTROLS BAR -->
+        <footer class="relative lg:fixed bottom-0 lg:bottom-4 left-0 right-0 z-30 flex flex-col items-center px-4 mt-6 lg:mt-0 lg:pointer-events-none">
+            <div class="glass-pill p-2 sm:px-5 sm:py-2 rounded-full flex flex-wrap items-center justify-center gap-2.5 pointer-events-auto shadow-xl">
+                <button onclick="openMessageModal(0)" class="btn-pastel-primary px-5 sm:px-6 py-2.5 rounded-full font-bold text-xs sm:text-sm flex items-center gap-2">
+                    <span>💌</span>
+                    <span id="ui-start-tour-btn">Abrir Carta 1 de 5</span>
+                </button>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- ==========================================
+         CELEBRATION & WISH MODAL (When blowing out candles)
+         ========================================== -->
+    <div id="wish-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#3D1C28]/40 backdrop-blur-md transition-opacity duration-300 opacity-0">
+        <div class="w-full max-w-md rounded-[2rem] bg-gradient-to-br from-[#FFF9FB] via-[#FFF0F5] to-[#F3E5F5] p-6 sm:p-8 border-2 border-white shadow-[0_25px_60px_-15px_rgba(156,65,99,0.5)] text-center relative overflow-hidden">
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-[#FFD6E0] to-[#FCF3CF] border-2 border-white shadow-md flex items-center justify-center text-3xl mb-3 animate-bounce" id="ui-wish-icon">
+                🎂
+            </div>
+            <h3 id="ui-wish-title" class="font-script text-4xl sm:text-5xl text-[#C24770] leading-tight mb-3">
+                ¡Deseo pedido! ¡Feliz cumple, Nata! 🎉💖
+            </h3>
+            <p id="ui-wish-message" class="font-serif-elegant italic text-sm sm:text-base text-[#5D3A43] leading-relaxed mb-5">
+                Acabas de soplar las 5 velitas de tu pastel. Que Dios y la vida te llenen siempre de salud, alegría, bendiciones y sueños cumplidos.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-2.5">
+                <button onclick="closeWishModal()" class="btn-pastel-primary px-7 py-3 rounded-full font-bold text-xs sm:text-sm shadow-lg" id="ui-wish-close-btn">
+                    Seguir viendo mi pastel 3D ✨
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         3D FLIPPING MESSAGE MODAL (1 TO 5)
+         ========================================== -->
+    <div id="message-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-[#3D1C28]/40 backdrop-blur-md transition-opacity duration-300 opacity-0">
+        <div class="modal-perspective w-full max-w-lg">
+            <div id="modal-card-3d" class="card-3d-stage relative rounded-[2rem] bg-gradient-to-br from-[#FFF9FB] via-[#FFF0F5] to-[#F3E5F5] p-6 sm:p-8 border-2 border-white shadow-[0_25px_60px_-15px_rgba(156,65,99,0.45)] overflow-hidden">
+                
+                <!-- Decorative Corner Ribbons / Florals -->
+                <div class="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br from-[#FFD6E0] to-[#E8DAEF] opacity-60 pointer-events-none"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-gradient-to-tr from-[#FCF3CF] to-[#D4EFDF] opacity-60 pointer-events-none"></div>
+
+                <!-- Close Modal Button -->
+                <button onclick="closeMessageModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/85 hover:bg-white text-[#883955] flex items-center justify-center shadow-sm transition hover:rotate-90 z-10" title="Cerrar">
+                    ✕
+                </button>
+
+                <!-- Step Badge & Floating Icon -->
+                <div class="flex flex-col items-center text-center relative z-10">
+                    <div id="modal-icon-badge" class="w-15 h-15 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr from-[#FFD6E0] via-[#FFF0F5] to-[#E8DAEF] border-2 border-white shadow-md flex items-center justify-center text-3xl mb-2.5 animate-bounce">
+                        ✨
+                    </div>
+
+                    <span id="modal-step-tag" class="px-3.5 py-1 rounded-full bg-[#FFD6E0]/75 text-[#9C4163] font-bold text-xs tracking-wider uppercase mb-2">
+                        Carta 1 de 5
+                    </span>
+
+                    <h2 id="modal-title" class="font-script text-3xl sm:text-4xl text-[#B84A6F] leading-tight mb-2.5">
+                        Carta 1 · Una Casualidad Muy Bonita
+                    </h2>
+
+                    <!-- Ornamental Divider -->
+                    <div class="flex items-center justify-center gap-2 w-40 mb-3">
+                        <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent to-[#D86C88]/60"></div>
+                        <span class="text-xs text-[#D86C88]">🌸</span>
+                        <div class="h-[1px] flex-1 bg-gradient-to-l from-transparent to-[#D86C88]/60"></div>
+                    </div>
+
+                    <!-- Message Body (Comfortable scroll & preserves line breaks) -->
+                    <div class="custom-scroll max-h-60 sm:max-h-72 overflow-y-auto px-2 sm:px-4 mb-4 text-left sm:text-center w-full">
+                        <p id="modal-body" class="font-serif-elegant text-sm sm:text-base text-[#5D3A43] leading-relaxed whitespace-pre-line">
+                            ...
+                        </p>
+                    </div>
+
+                    <!-- 1 to 5 Progress Dots -->
+                    <div id="modal-progress-dots" class="flex items-center justify-center gap-2.5 mb-5">
+                        <!-- Generated via JS -->
+                    </div>
+
+                    <!-- Navigation Buttons: ← Anterior & Pasar al siguiente ✨ -->
+                    <div class="flex items-center justify-between w-full gap-3">
+                        <button id="btn-prev-msg" onclick="prevMessage()" class="btn-pastel-secondary px-4 py-3 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-1.5">
+                            <span>←</span>
+                            <span id="ui-modal-prev-btn">Anterior</span>
+                        </button>
+
+                        <button id="btn-next-msg" onclick="nextMessage()" class="btn-pastel-primary flex-1 py-3.5 px-5 rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 shadow-lg">
+                            <span id="btn-next-label">Pasar al siguiente ✨</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================================================
+           1. NATA'S PERSONALIZED DATA (IGNORES ANY OLD LOCALSTORAGE)
+           ========================================================================= */
+        try {
+            localStorage.clear();
+        } catch (e) {}
+
+        const appData = {
+            modalPrevBtn: "Anterior",
+            modalNextBtn: "Pasar al siguiente ✨",
+            modalFinalBtn: "¡Soplar las velitas y celebrar! 🎂🎉",
+            messages: [
+                {
+                    id: 1,
+                    icon: "✨",
+                    shortLabel: "Carta 1 de 5",
+                    badgeColor: "#FFD6E0",
+                    title: "Carta 1 · Una Casualidad Muy Bonita",
+                    preview: "Lo increíble que eres y todo lo que he aprendido de ti...",
+                    content: "Primero que todo, que esta primera carta te recuerde lo increíble que eres y que tú fuiste una casualidad muy bonita. Desde que llegaste a mi vida, he aprendido muchas cosas de ti y, sobre todo, cómo saber entenderte; y no solo eso, sino también cómo eres con el mundo, aunque a veces el mundo no esté a tu lado. Eres una niña súper especial que ayuda a las personas, que nunca se rinde a pesar de todo y que siempre está con una sonrisita así nada esté bien. Bueno, y no solo eso: los recuerdos cuando jugábamos Free, ¡que sí eres una adicta, jajaj!, que hasta me enseñas a jugar o hablamos de cualquier cosa."
+                },
+                {
+                    id: 2,
+                    icon: "🌸",
+                    shortLabel: "Carta 2 de 5",
+                    badgeColor: "#E8DAEF",
+                    title: "Carta 2 · Iluminas Los Recuerdos",
+                    preview: "Tú iluminas los recuerdos de todas las personas que te rodean...",
+                    content: "Bueno, esta segunda carta es para decirte que uno con el tiempo entiende que no todas las personas que uno conoce están destinadas a quedarse en nuestros recuerdos. Algunas se convierten en parte de ellos; tú eres una de esas personas. No por algo en especial, sino por algo mucho más valioso: tu forma de ser. Hay personas que iluminan una habitación cuando entran, pero ¿sabes?, tú iluminas los recuerdos incluso cuando ya te has ido; no de cualquiera, sino los de todas las personas que te rodean."
+                },
+                {
+                    id: 3,
+                    icon: "🌷",
+                    shortLabel: "Carta 3 de 5",
+                    badgeColor: "#FCF3CF",
+                    title: "Carta 3 · Lo Que Admiro De Ti",
+                    preview: "Tu fuerza, tu forma tan linda de ver la vida y tu noble corazón...",
+                    content: "Bueno, la tercera: admiro todo absolutamente de ti, tu fuerza, tu forma tan linda de ver la vida y ese corazón tan noble que tienes. Eres una niña tan maravillosa que hoy inspiras a muchas personas y les cambias su mundo para que sean felices. Quiero que sepas que eres la mejor, nunca lo olvides; siempre estaré ahí para recordártelo: que eres capaz de grandes cosas, que vas a llegar muy lejos, que nunca te rindas y nunca olvides que eres la mejor."
+                },
+                {
+                    id: 4,
+                    icon: "💫",
+                    shortLabel: "Carta 4 de 5",
+                    badgeColor: "#D4EFDF",
+                    title: "Carta 4 · Tu Esencia Única",
+                    preview: "Que nunca pierdas esa esencia que te hace ser tú...",
+                    content: "Bueno, ya con esta ya casi terminamos.\n\nSi pudiera pedir algo para ti en este cumpleaños, no pediría una vida perfecta.\nPediría que nunca pierdas esa esencia que te hace ser tú.\nQue sigas riéndote fuerte.\nQue sigas soñando en grande.\nQue sigas siendo esa persona que deja algo bonito en quienes la rodean.\n\nY que dentro de muchos años, cuando mires hacia atrás, te sientas orgullosa de todo lo que lograste.\n¡Feliz cumpleaños! Gracias por tu amistad, por tu tiempo y por todos los buenos momentos. Espero que la vida te siga regalando cosas tan bonitas como tú."
+                },
+                {
+                    id: 5,
+                    icon: "🎂",
+                    shortLabel: "Carta 5 de 5",
+                    badgeColor: "#F8BBD0",
+                    title: "Carta 5 · ¡Feliz Cumpleaños, Mi Nata!",
+                    preview: "Pide un deseo muy fuerte y sopla las velitas de tu pastel...",
+                    content: "Bueno, en esta última carta te quiero desear: ¡Feliz cumpleaños, mi Nata! Que Dios y la vida te llenen de salud, alegría y bendiciones. Quiero que no pienses que hoy no va a ser un lindo día para ti, porque sí lo será: será el más lindo y maravilloso. El día se va a poner radiante solo para ti, porque sabe que la creación más linda está celebrando un día más de su linda vida.\n\nAhora cierra los ojos, pide un deseo muy fuerte y sopla las velitas de tu pastel."
+                }
+            ]
+        };
+
+        // State Management
+        let currentMessageIndex = 0;
+        let readMessages = new Set();
+        let candlesLit = true;
+        let isFlipping = false;
+        let envelopeState = 'closed'; // 'closed' | 'opening' | 'opened' | 'entered'
+
+        /* =========================================================================
+           1B. INITIAL ENVELOPE & LETTER OPENING SEQUENCE (SILENT / NO MUSIC)
+           ========================================================================= */
+        function handleEnvelopeCardClick(e) {
+            if (envelopeState === 'closed') {
+                openEnvelopeAnimation();
+            }
+        }
+
+        function openEnvelopeAnimation() {
+            if (envelopeState !== 'closed') return;
+            envelopeState = 'opening';
+
+            const wrapper = document.getElementById('envelope-3d-wrapper');
+            const openBtnContainer = document.getElementById('env-open-btn-container');
+
+            wrapper.classList.add('is-open');
+            if (openBtnContainer) {
+                openBtnContainer.classList.add('opacity-0', 'pointer-events-none');
+            }
+
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 65,
+                    spread: 75,
+                    origin: { y: 0.55 },
+                    colors: ['#FFD6E0', '#F48FB1', '#E8DAEF', '#D4EFDF', '#FCF3CF']
+                });
+            }
+
+            setTimeout(() => {
+                envelopeState = 'opened';
+            }, 800);
+        }
+
+        function enterCakeWorld(e) {
+            if (e) e.stopPropagation();
+            envelopeState = 'entered';
+
+            const introScreen = document.getElementById('envelope-intro-screen');
+            introScreen.classList.add('intro-hidden');
+
+            onWindowResize();
+            targetRotationY += 1.35;
+        }
+
+        function showEnvelopeScreen() {
+            envelopeState = 'closed';
+
+            const introScreen = document.getElementById('envelope-intro-screen');
+            const wrapper = document.getElementById('envelope-3d-wrapper');
+            const openBtnContainer = document.getElementById('env-open-btn-container');
+
+            wrapper.classList.remove('is-open');
+            if (openBtnContainer) {
+                openBtnContainer.classList.remove('opacity-0', 'pointer-events-none');
+            }
+
+            introScreen.classList.remove('intro-hidden');
+        }
+
+        /* =========================================================================
+           2. THREE.JS 3D INTERACTIVE PASTEL BIRTHDAY CAKE (100% VISIBLE CANDLES FIX)
+           ========================================================================= */
+        let scene, camera, renderer, cakeGroup;
+        let flameMeshes = [];
+        let candlePointLights = [];
+        let floating3DHearts = [];
+        let smokeParticles = [];
+        let targetRotationY = 0.4;
+        let targetRotationX = 0.06;
+        let isDraggingCake = false;
+        let prevPointer = { x: 0, y: 0 };
+
+        function initThreeJSCake() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+
+            const width = container.clientWidth || window.innerWidth;
+            const height = container.clientHeight || window.innerHeight;
+
+            camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // Soft Romantic Lighting
+            const ambientLight = new THREE.AmbientLight(0xFFF0F5, 0.9);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xFFF9FB, 0.85);
+            dirLight.position.set(6, 11, 8);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+
+            const pinkRimLight = new THREE.DirectionalLight(0xF48FB1, 0.5);
+            pinkRimLight.position.set(-7, 5, -5);
+            scene.add(pinkRimLight);
+
+            // Main Cake Group positioned so pedestal to candle flames are centered
+            cakeGroup = new THREE.Group();
+            cakeGroup.position.y = -0.85;
+            scene.add(cakeGroup);
+
+            buildPastelBirthdayCake();
+            buildFloating3DHearts();
+            updateCameraFraming();
+
+            // Mouse & Touch Rotation Interaction
+            container.addEventListener('mousedown', onPointerDown);
+            window.addEventListener('mousemove', onPointerMove);
+            window.addEventListener('mouseup', onPointerUp);
+
+            container.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    onPointerDown({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches.length === 1 && isDraggingCake) {
+                    onPointerMove({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchend', onPointerUp);
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        // Responsive camera framing so the entire cake AND top 5 candles are 100% visible on every screen
+        function updateCameraFraming() {
+            if (!camera || !cakeGroup) return;
+            const container = document.getElementById('canvas-container');
+            const w = container.clientWidth || window.innerWidth;
+            const h = container.clientHeight || window.innerHeight;
+            const aspect = w / h;
+            const isDesktopFull = window.innerWidth >= 1024;
+
+            if (isDesktopFull) {
+                // On desktop, the header is at the top and buttons at the bottom; frame the cake & candles right in the clear center
+                cakeGroup.position.y = -0.95;
+                const zDist = aspect < 1.35 ? 10.6 : 9.6;
+                camera.position.set(0, 1.55, zDist);
+                camera.lookAt(0, 0.75, 0);
+            } else {
+                // On mobile/tablet, the canvas has its own dedicated stage box; fit from pedestal to top flames with generous margin
+                cakeGroup.position.y = -0.75;
+                const zDist = aspect < 0.85 ? 9.8 : 8.8;
+                camera.position.set(0, 1.5, zDist);
+                camera.lookAt(0, 0.85, 0);
+            }
+        }
+
+        function buildPastelBirthdayCake() {
+            const standMat = new THREE.MeshStandardMaterial({ color: 0xFFFDF9, roughness: 0.25, metalness: 0.1 });
+            const goldMat = new THREE.MeshStandardMaterial({ color: 0xE5C158, roughness: 0.22, metalness: 0.75 });
+            const tier1Mat = new THREE.MeshStandardMaterial({ color: 0xFFD6E0, roughness: 0.42 }); // Blush Pink
+            const tier2Mat = new THREE.MeshStandardMaterial({ color: 0xE8DAEF, roughness: 0.42 }); // Pastel Lavender
+            const tier3Mat = new THREE.MeshStandardMaterial({ color: 0xFFF5E4, roughness: 0.38 }); // Cream Peach
+            const icingMat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, roughness: 0.28 });
+            const berryMat = new THREE.MeshStandardMaterial({ color: 0xE63966, roughness: 0.25 });
+            const mintMat = new THREE.MeshStandardMaterial({ color: 0xB8E6C9, roughness: 0.38 });
+
+            // 1. Cake Pedestal & Stand
+            const baseFoot = new THREE.Mesh(new THREE.CylinderGeometry(1.05, 1.4, 0.5, 36), standMat);
+            baseFoot.position.y = -1.3;
+            cakeGroup.add(baseFoot);
+
+            const plate = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 2.35, 0.15, 48), standMat);
+            plate.position.y = -0.98;
+            cakeGroup.add(plate);
+
+            const goldRim = new THREE.Mesh(new THREE.TorusGeometry(2.45, 0.045, 16, 64), goldMat);
+            goldRim.rotation.x = Math.PI / 2;
+            goldRim.position.y = -0.94;
+            cakeGroup.add(goldRim);
+
+            // 2. Bottom Tier (Blush Pink)
+            const tier1Height = 1.08;
+            const tier1Radius = 2.05;
+            const tier1 = new THREE.Mesh(new THREE.CylinderGeometry(tier1Radius, tier1Radius, tier1Height, 48), tier1Mat);
+            tier1.position.y = -0.36;
+            cakeGroup.add(tier1);
+
+            addPearlRing(tier1Radius + 0.03, -0.86, 28, 0.08, icingMat, goldMat);
+            addPearlRing(tier1Radius - 0.02, 0.18, 24, 0.1, icingMat, mintMat);
+
+            // 3. Middle Tier (Pastel Lavender)
+            const tier2Height = 0.92;
+            const tier2Radius = 1.48;
+            const tier2 = new THREE.Mesh(new THREE.CylinderGeometry(tier2Radius, tier2Radius, tier2Height, 48), tier2Mat);
+            tier2.position.y = 0.64;
+            cakeGroup.add(tier2);
+
+            addPearlRing(tier2Radius + 0.03, 0.21, 22, 0.075, goldMat, icingMat);
+            addPearlRing(tier2Radius - 0.02, 1.1, 20, 0.09, icingMat, tier1Mat);
+
+            for (let i = 0; i < 10; i++) {
+                const angle = (i / 10) * Math.PI * 2;
+                const dot = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 12), goldMat);
+                dot.position.set(
+                    Math.cos(angle) * (tier2Radius + 0.02),
+                    0.66 + (i % 2 === 0 ? 0.11 : -0.09),
+                    Math.sin(angle) * (tier2Radius + 0.02)
+                );
+                cakeGroup.add(dot);
+            }
+
+            // 4. Top Tier (Cream / Peach with Strawberries)
+            const tier3Height = 0.78;
+            const tier3Radius = 0.98;
+            const tier3 = new THREE.Mesh(new THREE.CylinderGeometry(tier3Radius, tier3Radius, tier3Height, 44), tier3Mat);
+            tier3.position.y = 1.49;
+            cakeGroup.add(tier3);
+
+            addPearlRing(tier3Radius + 0.02, 1.12, 18, 0.068, tier1Mat, icingMat);
+
+            // Whipped Cream Swirls & Strawberries around Top Tier edge
+            const numBerries = 8;
+            for (let i = 0; i < numBerries; i++) {
+                const angle = (i / numBerries) * Math.PI * 2;
+                const r = tier3Radius - 0.16;
+                const bx = Math.cos(angle) * r;
+                const bz = Math.sin(angle) * r;
+
+                const puff = new THREE.Mesh(new THREE.SphereGeometry(0.105, 14, 14), icingMat);
+                puff.position.set(bx, 1.9, bz);
+                cakeGroup.add(puff);
+
+                const berry = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.17, 14), berryMat);
+                berry.position.set(bx, 2.02, bz);
+                cakeGroup.add(berry);
+            }
+
+            // 5. FIVE PROMINENT, HIGHLY VISIBLE BIRTHDAY CANDLES & BRIGHT DOUBLE FLAMES
+            // Arranged in a clear crown on the top tier so all 5 candles and flames stand out unmistakably
+            const candlePositions = [
+                { x: 0, z: 0 },            // Center Candle
+                { x: 0.48, z: 0.28 },      // Front Right
+                { x: -0.48, z: 0.28 },     // Front Left
+                { x: 0.34, z: -0.44 },     // Back Right
+                { x: -0.34, z: -0.44 }     // Back Left
+            ];
+            const candleColors = [0xFF8DA1, 0xCE93D8, 0x80CBC4, 0xFFD54F, 0xF48FB1];
+
+            candlePositions.forEach((pos, idx) => {
+                const candleHeight = 0.74;
+                const candleRadius = 0.082;
+                const baseTopY = 1.88;
+
+                // Gold rosette candle holder
+                const holder = new THREE.Mesh(new THREE.CylinderGeometry(0.115, 0.125, 0.07, 20), goldMat);
+                holder.position.set(pos.x, baseTopY + 0.03, pos.z);
+                cakeGroup.add(holder);
+
+                // Main pastel wax body
+                const cMat = new THREE.MeshStandardMaterial({
+                    color: candleColors[idx],
+                    roughness: 0.25,
+                    metalness: 0.05
+                });
+                const candleBody = new THREE.Mesh(
+                    new THREE.CylinderGeometry(candleRadius, candleRadius, candleHeight, 24),
+                    cMat
+                );
+                candleBody.position.set(pos.x, baseTopY + candleHeight / 2 + 0.05, pos.z);
+                cakeGroup.add(candleBody);
+
+                // White & Gold decorative stripes around each candle for high contrast
+                for (let s = 0; s < 3; s++) {
+                    const ringMat = s === 1 ? goldMat : icingMat;
+                    const stripe = new THREE.Mesh(
+                        new THREE.TorusGeometry(candleRadius + 0.006, 0.014, 10, 24),
+                        ringMat
+                    );
+                    stripe.rotation.x = Math.PI / 2;
+                    stripe.position.set(pos.x, baseTopY + 0.2 + s * 0.21, pos.z);
+                    cakeGroup.add(stripe);
+                }
+
+                // Distinct dark candle wick
+                const wickTopY = baseTopY + candleHeight + 0.09;
+                const wick = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.015, 0.015, 0.11, 10),
+                    new THREE.MeshBasicMaterial({ color: 0x2D1A12 })
+                );
+                wick.position.set(pos.x, wickTopY, pos.z);
+                cakeGroup.add(wick);
+
+                // Bright Multi-Layered Glowing Flame Group
+                const flameGroup = new THREE.Group();
+                flameGroup.position.set(pos.x, wickTopY + 0.17, pos.z);
+
+                // Soft warm glow halo sphere behind flame
+                const haloGeo = new THREE.SphereGeometry(0.19, 16, 16);
+                const haloMat = new THREE.MeshBasicMaterial({
+                    color: 0xFFAB40,
+                    transparent: true,
+                    opacity: 0.32
+                });
+                const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+                haloMesh.position.y = -0.02;
+                flameGroup.add(haloMesh);
+
+                // Outer golden-orange teardrop flame
+                const outerFlameGeo = new THREE.ConeGeometry(0.105, 0.34, 18);
+                const outerFlameMat = new THREE.MeshBasicMaterial({
+                    color: 0xFF9800,
+                    transparent: true,
+                    opacity: 0.95
+                });
+                const outerFlame = new THREE.Mesh(outerFlameGeo, outerFlameMat);
+                flameGroup.add(outerFlame);
+
+                // Inner bright yellow-white core flame
+                const innerFlameGeo = new THREE.ConeGeometry(0.058, 0.21, 14);
+                const innerFlameMat = new THREE.MeshBasicMaterial({ color: 0xFFFFE0 });
+                const innerFlame = new THREE.Mesh(innerFlameGeo, innerFlameMat);
+                innerFlame.position.y = -0.04;
+                flameGroup.add(innerFlame);
+
+                cakeGroup.add(flameGroup);
+                flameMeshes.push(flameGroup);
+
+                // Warm Candle PointLight
+                const pLight = new THREE.PointLight(0xFFCC80, 0.55, 4.5);
+                pLight.position.set(pos.x, wickTopY + 0.25, pos.z);
+                cakeGroup.add(pLight);
+                candlePointLights.push(pLight);
+            });
+        }
+
+        function addPearlRing(radius, yPos, count, size, matA, matB) {
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * Math.PI * 2;
+                const mat = i % 2 === 0 ? matA : matB;
+                const pearl = new THREE.Mesh(new THREE.SphereGeometry(size, 12, 12), mat);
+                pearl.position.set(Math.cos(angle) * radius, yPos, Math.sin(angle) * radius);
+                cakeGroup.add(pearl);
+            }
+        }
+
+        function createHeartShape() {
+            const x = 0, y = 0;
+            const heartShape = new THREE.Shape();
+            heartShape.moveTo(x + 0.25, y + 0.25);
+            heartShape.bezierCurveTo(x + 0.25, y + 0.25, x + 0.20, y, x, y);
+            heartShape.bezierCurveTo(x - 0.30, y, x - 0.30, y + 0.35, x - 0.30, y + 0.35);
+            heartShape.bezierCurveTo(x - 0.30, y + 0.55, x - 0.10, y + 0.77, x + 0.25, y + 0.95);
+            heartShape.bezierCurveTo(x + 0.60, y + 0.77, x + 0.80, y + 0.55, x + 0.80, y + 0.35);
+            heartShape.bezierCurveTo(x + 0.80, y + 0.35, x + 0.80, y, x + 0.50, y);
+            heartShape.bezierCurveTo(x + 0.35, y, x + 0.25, y + 0.25, x + 0.25, y + 0.25);
+            return heartShape;
+        }
+
+        function buildFloating3DHearts() {
+            const heartShape = createHeartShape();
+            const extrudeSettings = { depth: 0.12, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 0.04, bevelThickness: 0.04 };
+            const heartGeo = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
+            heartGeo.center();
+
+            const pastelPalette = [0xFFD6E0, 0xF48FB1, 0xE8DAEF, 0xFCF3CF, 0xD4EFDF];
+
+            for (let i = 0; i < 12; i++) {
+                const mat = new THREE.MeshStandardMaterial({
+                    color: pastelPalette[i % pastelPalette.length],
+                    roughness: 0.35,
+                    metalness: 0.1
+                });
+                const heartMesh = new THREE.Mesh(heartGeo, mat);
+                const scale = 0.2 + Math.random() * 0.16;
+                heartMesh.scale.set(scale, scale, scale);
+                heartMesh.rotation.z = Math.PI;
+
+                const angle = (i / 12) * Math.PI * 2;
+                const radius = 3.25 + Math.random() * 1.2;
+                const yOffset = -1.1 + Math.random() * 2.9;
+
+                heartMesh.userData = {
+                    baseAngle: angle,
+                    radius: radius,
+                    baseY: yOffset,
+                    speed: 0.22 + Math.random() * 0.22,
+                    phase: Math.random() * Math.PI * 2
+                };
+
+                scene.add(heartMesh);
+                floating3DHearts.push(heartMesh);
+            }
+        }
+
+        function spawnCandleSmoke() {
+            const smokeGeo = new THREE.SphereGeometry(0.075, 10, 10);
+            flameMeshes.forEach((flame) => {
+                for (let i = 0; i < 7; i++) {
+                    const smokeMat = new THREE.MeshBasicMaterial({
+                        color: 0xFFF0F5,
+                        transparent: true,
+                        opacity: 0.8
+                    });
+                    const puff = new THREE.Mesh(smokeGeo, smokeMat);
+                    puff.position.copy(flame.position);
+                    puff.position.x += (Math.random() - 0.5) * 0.1;
+                    puff.position.z += (Math.random() - 0.5) * 0.1;
+                    puff.userData = {
+                        vy: 0.018 + Math.random() * 0.022,
+                        vx: (Math.random() - 0.5) * 0.012,
+                        vz: (Math.random() - 0.5) * 0.012,
+                        life: 1.0
+                    };
+                    cakeGroup.add(puff);
+                    smokeParticles.push(puff);
+                }
+            });
+        }
+
+        function onPointerDown(e) {
+            isDraggingCake = true;
+            prevPointer.x = e.clientX;
+            prevPointer.y = e.clientY;
+        }
+
+        function onPointerMove(e) {
+            if (!isDraggingCake) return;
+            const dx = e.clientX - prevPointer.x;
+            const dy = e.clientY - prevPointer.y;
+            targetRotationY += dx * 0.0085;
+            targetRotationX = Math.max(-0.22, Math.min(0.42, targetRotationX + dy * 0.005));
+            prevPointer.x = e.clientX;
+            prevPointer.y = e.clientY;
+        }
+
+        function onPointerUp() {
+            isDraggingCake = false;
+        }
+
+        function onWindowResize() {
+            if (!camera || !renderer) return;
+            const container = document.getElementById('canvas-container');
+            const w = container.clientWidth || window.innerWidth;
+            const h = container.clientHeight || window.innerHeight;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            updateCameraFraming();
+            renderer.setSize(w, h);
+            positionOrbitingCards();
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            const time = performance.now() * 0.001;
+
+            if (cakeGroup) {
+                if (!isDraggingCake) {
+                    targetRotationY += 0.0035;
+                }
+                cakeGroup.rotation.y += (targetRotationY - cakeGroup.rotation.y) * 0.08;
+                cakeGroup.rotation.x += (targetRotationX - cakeGroup.rotation.x) * 0.08;
+            }
+
+            // Flicker the 5 prominent candle flames
+            flameMeshes.forEach((flame, idx) => {
+                flame.visible = candlesLit;
+                if (candlesLit) {
+                    const flickerY = 1 + Math.sin(time * 15 + idx * 2.1) * 0.14 + Math.cos(time * 23 + idx) * 0.07;
+                    const flickerXZ = 1 + Math.sin(time * 11 + idx) * 0.06;
+                    flame.scale.set(flickerXZ, flickerY, flickerXZ);
+                    flame.rotation.z = Math.sin(time * 8 + idx) * 0.09;
+                }
+            });
+
+            candlePointLights.forEach((light, idx) => {
+                light.intensity = candlesLit ? (0.55 + Math.sin(time * 12 + idx) * 0.14) : 0;
+            });
+
+            // Update Smoke Particles when candles are blown out
+            for (let i = smokeParticles.length - 1; i >= 0; i--) {
+                const p = smokeParticles[i];
+                p.position.y += p.userData.vy;
+                p.position.x += p.userData.vx;
+                p.position.z += p.userData.vz;
+                p.scale.multiplyScalar(1.028);
+                p.userData.life -= 0.016;
+                p.material.opacity = Math.max(0, p.userData.life * 0.75);
+                if (p.userData.life <= 0) {
+                    cakeGroup.remove(p);
+                    smokeParticles.splice(i, 1);
+                }
+            }
+
+            // Animate 3D Floating Pastel Hearts Around the Cake
+            floating3DHearts.forEach((h) => {
+                const u = h.userData;
+                const currentAngle = u.baseAngle + time * u.speed * 0.4;
+                h.position.x = Math.cos(currentAngle) * u.radius;
+                h.position.z = Math.sin(currentAngle) * u.radius;
+                h.position.y = u.baseY + Math.sin(time * 1.5 + u.phase) * 0.25;
+                h.rotation.y = time * 0.8 + u.phase;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        /* =========================================================================
+           4. FIVE MESSAGE CARDS (UNOBSTRUCTED SIDES ON DESKTOP, CLEAN GRID ON MOBILE)
+           ========================================================================= */
+        function renderOrbitingCards() {
+            const container = document.getElementById('orbit-container');
+            container.innerHTML = '';
+
+            appData.messages.forEach((msg, idx) => {
+                const isRead = readMessages.has(idx);
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.id = `orbit-card-${idx}`;
+                card.className = `orbit-card glass-pill pointer-events-auto rounded-2xl p-3.5 sm:p-4 flex items-center gap-3 text-left group ${idx === 0 && !isRead ? 'active-pulse' : ''} ${idx === 4 ? 'sm:col-span-2 sm:max-w-xs sm:mx-auto lg:max-w-none' : ''}`;
+                card.onclick = () => openMessageModal(idx);
+
+                card.innerHTML = `
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center text-xl sm:text-2xl shadow-inner shrink-0 transition-transform group-hover:scale-110"
+                         style="background: ${msg.badgeColor};">
+                        ${msg.icon}
+                    </div>
+                    <div class="min-w-0 flex-1 pr-1">
+                        <div class="flex items-center justify-between gap-1.5 mb-0.5">
+                            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#9C4163]">
+                                ${msg.shortLabel || ('Mensaje ' + (idx + 1))}
+                            </span>
+                            <span id="check-badge-${idx}" class="text-xs ${isRead ? 'inline-flex' : 'hidden'} items-center px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">✓ Leído</span>
+                        </div>
+                        <p class="font-serif-elegant font-bold text-sm sm:text-base text-[#5D3A43] truncate lg:max-w-[175px]">
+                            ${msg.title}
+                        </p>
+                        <p class="text-[11px] text-[#885A69] truncate lg:max-w-[175px] mt-0.5">
+                            ${msg.preview || 'Toca para abrir este mensaje...'}
+                        </p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            positionOrbitingCards();
+        }
+
+        function positionOrbitingCards() {
+            const isDesktop = window.innerWidth >= 1024;
+
+            // On Desktop (>=1024px), place the 5 cards along the left & right flanks so the center 3D cake and top 5 candles are 100% unobstructed
+            const desktopCoords = [
+                { x: 16, y: 34 }, // 1: Upper Left
+                { x: 84, y: 34 }, // 2: Upper Right
+                { x: 85, y: 58 }, // 3: Middle-Lower Right
+                { x: 78, y: 80 }, // 4: Bottom Right
+                { x: 16, y: 64 }  // 5: Lower Left
+            ];
+
+            appData.messages.forEach((_, idx) => {
+                const el = document.getElementById(`orbit-card-${idx}`);
+                if (!el) return;
+                if (isDesktop && desktopCoords[idx]) {
+                    el.style.left = `${desktopCoords[idx].x}%`;
+                    el.style.top = `${desktopCoords[idx].y}%`;
+                    el.style.width = '255px';
+                } else {
+                    el.style.left = '';
+                    el.style.top = '';
+                    el.style.width = '';
+                }
+            });
+        }
+
+        /* =========================================================================
+           5. INTERACTIVE 5-MESSAGE SEQUENTIAL MODAL ("PASAR AL SIGUIENTE")
+           ========================================================================= */
+        function openMessageModal(index) {
+            currentMessageIndex = index;
+            markMessageAsRead(index);
+
+            const modal = document.getElementById('message-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+            });
+
+            populateModalContent(index);
+        }
+
+        function closeMessageModal() {
+            const modal = document.getElementById('message-modal');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 280);
+        }
+
+        function markMessageAsRead(index) {
+            readMessages.add(index);
+            const checkEl = document.getElementById(`check-badge-${index}`);
+            if (checkEl) {
+                checkEl.classList.remove('hidden');
+                checkEl.classList.add('inline-flex');
+            }
+            const cardEl = document.getElementById(`orbit-card-${index}`);
+            if (cardEl) cardEl.classList.remove('active-pulse');
+        }
+
+        function populateModalContent(index) {
+            const msg = appData.messages[index];
+            document.getElementById('modal-icon-badge').textContent = msg.icon;
+            document.getElementById('modal-step-tag').textContent = msg.shortLabel;
+            document.getElementById('modal-title').textContent = msg.title;
+            document.getElementById('modal-body').textContent = msg.content;
+            document.getElementById('ui-modal-prev-btn').textContent = appData.modalPrevBtn;
+
+            // Scroll message container back to top smoothly when switching cards
+            const scrollBox = document.getElementById('modal-body').parentElement;
+            if (scrollBox) scrollBox.scrollTop = 0;
+
+            // Progress Dots 1 to 5
+            const dotsContainer = document.getElementById('modal-progress-dots');
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.onclick = () => transitionToMessage(i);
+                dot.className = i === index
+                    ? 'w-7 h-2.5 rounded-full bg-[#D86C88] transition-all'
+                    : 'w-2.5 h-2.5 rounded-full bg-[#F8BBD0] hover:bg-[#F06292] transition-all';
+                dotsContainer.appendChild(dot);
+            }
+
+            // Previous Button State
+            const prevBtn = document.getElementById('btn-prev-msg');
+            prevBtn.style.visibility = index === 0 ? 'hidden' : 'visible';
+
+            // Next Button ("Pasar al siguiente ✨" vs Final Celebration on 5th message)
+            const nextLabel = document.getElementById('btn-next-label');
+            if (index < 4) {
+                nextLabel.textContent = appData.modalNextBtn;
+            } else {
+                nextLabel.textContent = appData.modalFinalBtn;
+            }
+        }
+
+        function transitionToMessage(newIndex) {
+            if (isFlipping || newIndex === currentMessageIndex) return;
+            isFlipping = true;
+
+            const card3D = document.getElementById('modal-card-3d');
+            card3D.classList.add('card-flip-out');
+
+            setTimeout(() => {
+                currentMessageIndex = newIndex;
+                markMessageAsRead(newIndex);
+                populateModalContent(newIndex);
+
+                card3D.classList.remove('card-flip-out');
+                card3D.classList.add('card-flip-in-prep');
+
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        card3D.classList.remove('card-flip-in-prep');
+                        setTimeout(() => {
+                            isFlipping = false;
+                        }, 450);
+                    });
+                });
+            }, 300);
+        }
+
+        function nextMessage() {
+            if (currentMessageIndex < 4) {
+                transitionToMessage(currentMessageIndex + 1);
+            } else {
+                closeMessageModal();
+                setTimeout(() => {
+                    blowOutCandlesAndCelebrate();
+                }, 320);
+            }
+        }
+
+        function prevMessage() {
+            if (currentMessageIndex > 0) {
+                transitionToMessage(currentMessageIndex - 1);
+            }
+        }
+
+        /* =========================================================================
+           6. BLOW OUT CANDLES & PASTEL CONFETTI CELEBRATION (NO SOUND)
+           ========================================================================= */
+        function blowOutCandlesAndCelebrate() {
+            candlesLit = false;
+            spawnCandleSmoke();
+            launchPastelConfetti();
+
+            // Show "🕯️ Encender Velas" button in top bar now that candles are blown out
+            const topCandlesBtn = document.getElementById('btn-top-candles');
+            if (topCandlesBtn) {
+                topCandlesBtn.classList.remove('hidden');
+                topCandlesBtn.classList.add('flex');
+            }
+
+            // Show floating celebration banner: "¡Deseo pedido! ¡Feliz cumple, Nata! 🎉💖"
+            const banner = document.getElementById('celebration-banner');
+            if (banner) {
+                banner.classList.remove('opacity-0', '-translate-y-4');
+                banner.classList.add('opacity-100', 'translate-y-0');
+            }
+
+            setTimeout(() => {
+                openWishModal();
+            }, 650);
+        }
+
+        function relightCandles() {
+            candlesLit = true;
+            const topCandlesBtn = document.getElementById('btn-top-candles');
+            if (topCandlesBtn) {
+                topCandlesBtn.classList.add('hidden');
+                topCandlesBtn.classList.remove('flex');
+            }
+
+            const banner = document.getElementById('celebration-banner');
+            if (banner) {
+                banner.classList.add('opacity-0', '-translate-y-4');
+                banner.classList.remove('opacity-100', 'translate-y-0');
+            }
+        }
+
+        function openWishModal() {
+            const modal = document.getElementById('wish-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                modal.classList.add('opacity-100');
+            });
+        }
+
+        function closeWishModal() {
+            const modal = document.getElementById('wish-modal');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 280);
+        }
+
+        function launchPastelConfetti() {
+            if (typeof confetti !== 'function') return;
+            const pastelColors = ['#FFD6E0', '#F48FB1', '#E8DAEF', '#D4EFDF', '#FCF3CF', '#D4AF37'];
+
+            confetti({
+                particleCount: 95,
+                spread: 85,
+                origin: { y: 0.58 },
+                colors: pastelColors
+            });
+
+            setTimeout(() => {
+                confetti({
+                    particleCount: 55,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0.1, y: 0.65 },
+                    colors: pastelColors
+                });
+                confetti({
+                    particleCount: 55,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 0.9, y: 0.65 },
+                    colors: pastelColors
+                });
+            }, 300);
+        }
+
+        /* =========================================================================
+           7. AMBIENT FLOATING 2D HEARTS & SPARKLES
+           ========================================================================= */
+        function createAmbientFloatingParticles() {
+            const container = document.getElementById('ambient-particles');
+            const symbols = ['🌸', '✨', '💖', '🌷', '🤍', '🎀'];
+            for (let i = 0; i < 16; i++) {
+                const span = document.createElement('span');
+                span.className = 'ambient-particle';
+                span.textContent = symbols[i % symbols.length];
+                span.style.left = `${Math.random() * 96}%`;
+                span.style.fontSize = `${12 + Math.random() * 12}px`;
+                span.style.animationDuration = `${12 + Math.random() * 14}s`;
+                span.style.animationDelay = `-${Math.random() * 15}s`;
+                container.appendChild(span);
+            }
+        }
+
+        /* =========================================================================
+           8. INITIALIZE ON WINDOW LOAD
+           ========================================================================= */
+        window.onload = function () {
+            renderOrbitingCards();
+            createAmbientFloatingParticles();
+            initThreeJSCake();
+            animate3D();
+        };
+    </script>
+</body>
+</html>
